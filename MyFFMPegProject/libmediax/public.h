@@ -14,8 +14,9 @@ enum SourceType
 
 enum CodecType
 {
-	FLVCodec,     // 
-	H264Codec
+	FLVCodec,     // flv Á÷
+	H264Codec,    // mp4
+	MPEGTS        // ts Á÷
 };
 
 enum MutexType

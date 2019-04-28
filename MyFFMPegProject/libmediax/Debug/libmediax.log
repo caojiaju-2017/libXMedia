@@ -1,21 +1,32 @@
-﻿  MediaHelper.cpp
+﻿  stdafx.cpp
+  libmediax.cpp
+D:\Work\libXMedia\MyFFMPegProject\include\stdint.h(162): warning C4005: “SIZE_MAX”: 宏重定义
+  C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.20.27508\include\limits.h(76): note: 参见“SIZE_MAX”的前一个定义
+D:\Work\libXMedia\MyFFMPegProject\include\libavutil\rational.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+D:\Work\libXMedia\MyFFMPegProject\libmediax\libmediax.cpp(117): warning C4305: “return”: 从“int”到“bool”截断
+  MediaContainer.cpp
+C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\wchar.h(33): warning C4005: “WCHAR_MIN”: 宏重定义
+  D:\Work\libXMedia\MyFFMPegProject\include\stdint.h(165): note: 参见“WCHAR_MIN”的前一个定义
+D:\Work\libXMedia\MyFFMPegProject\include\libavutil\rational.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
+  MediaHelper.cpp
 D:\Work\libXMedia\MyFFMPegProject\include\libavutil\rational.h : warning C4819: 该文件包含不能在当前代码页(936)中表示的字符。请将该文件保存为 Unicode 格式以防止数据丢失
 C:\Program Files (x86)\Windows Kits\10\Include\10.0.17763.0\ucrt\wchar.h(33): warning C4005: “WCHAR_MIN”: 宏重定义
   D:\Work\libXMedia\MyFFMPegProject\include\stdint.h(165): note: 参见“WCHAR_MIN”的前一个定义
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(314): warning C4996: 'AVStream::codec': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(319): warning C4996: 'AVStream::codec': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavformat\avformat.h(893): note: 参见“AVStream::codec”的声明
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(315): warning C4996: 'AVStream::codec': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(320): warning C4996: 'AVStream::codec': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavformat\avformat.h(893): note: 参见“AVStream::codec”的声明
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(348): warning C4996: 'AVStream::codec': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(353): warning C4996: 'AVStream::codec': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavformat\avformat.h(893): note: 参见“AVStream::codec”的声明
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(315): warning C4996: 'avcodec_copy_context': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(320): warning C4996: 'avcodec_copy_context': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavcodec\avcodec.h(4412): note: 参见“avcodec_copy_context”的声明
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(387): warning C4996: 'AVStream::codec': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(392): warning C4996: 'AVStream::codec': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavformat\avformat.h(893): note: 参见“AVStream::codec”的声明
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(388): warning C4996: 'AVStream::codec': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(393): warning C4996: 'AVStream::codec': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavformat\avformat.h(893): note: 参见“AVStream::codec”的声明
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(421): warning C4996: 'AVStream::codec': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(426): warning C4996: 'AVStream::codec': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavformat\avformat.h(893): note: 参见“AVStream::codec”的声明
-D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(388): warning C4996: 'avcodec_copy_context': 被声明为已否决
+D:\Work\libXMedia\MyFFMPegProject\libmediax\MediaHelper.cpp(393): warning C4996: 'avcodec_copy_context': 被声明为已否决
   D:\Work\libXMedia\MyFFMPegProject\include\libavcodec\avcodec.h(4412): note: 参见“avcodec_copy_context”的声明
+  正在生成代码...
   libmediax.vcxproj -> D:\Work\libXMedia\MyFFMPegProject\Debug\libmediax.lib

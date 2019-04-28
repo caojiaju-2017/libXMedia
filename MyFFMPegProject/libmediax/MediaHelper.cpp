@@ -284,6 +284,11 @@ int MediaHelper::OpenOutput(string outUrl, CodecType type= FLVCodec)
 	{
 		typeExtern = "mp4";
 	}
+	else if (type == MPEGTS)
+	{
+		typeExtern = "mpegts";
+	}
+
 	int ret = avformat_alloc_output_context2(&outputContext, NULL, typeExtern.c_str(), outUrl.c_str());
 
 	if (ret < 0)

@@ -195,6 +195,63 @@ void rtmpToFile()
 	}
 }
 
+void rtmpAndRtspToTS()
+{
+	std::cout << "Hello World!\n";
+
+	int* instance1 = new int(0);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+	InitHandle(*instance1);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+
+	int* instance2 = new int(0);
+	std::cout << "Instance2=" << *instance2 << std::endl;
+	InitHandle(*instance2);
+	std::cout << "Instance2=" << *instance2 << std::endl;
+
+
+	PersientLive(*instance1, "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov", "d:\\Work\\Temp\\rtspToTS.ts", MPEGTS, 80);
+
+	//std::chrono::milliseconds dura(6000);
+	//std::this_thread::sleep_for(dura);
+
+	PersientLive(*instance2, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToTS.ts", MPEGTS, 80);
+
+	//std::chrono::milliseconds dura(6000);
+	//std::this_thread::sleep_for(dura);
+	int exist = 0;
+	while (true)
+	{
+
+		if (instance1 != nullptr && !IsBusy(*instance1))
+		{
+			CloseHandle(*instance1);
+			delete instance1;
+			instance1 = nullptr;
+			exist = exist + 1;
+			//break;
+		}
+
+		if (instance2 != nullptr && !IsBusy(*instance2))
+		{
+			CloseHandle(*instance2);
+			delete instance2;
+			instance2 = nullptr;
+			exist = exist + 1;
+			//break;
+		}
+
+		if (exist >= 2)
+		{
+			break;
+		}
+
+		std::chrono::milliseconds dura(1000);
+		std::this_thread::sleep_for(dura);
+
+	}
+}
+
 int main()
 {
     
@@ -202,7 +259,9 @@ int main()
 
 	//rtmpToFile();
 
-	RtspToRtmp();
+	// RtspToRtmp();
+
+	rtmpAndRtspToTS();
 
 	/*CloseHandle(*instance1);
 
