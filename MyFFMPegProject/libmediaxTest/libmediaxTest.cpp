@@ -9,10 +9,10 @@
 #include <thread>
 #include "../libmediax/libmediax.h"
 
-int main()
+void rtspToFile()
 {
-    std::cout << "Hello World!\n"; 
-	
+	std::cout << "Hello World!\n";
+
 	int* instance1 = new int(0);
 	std::cout << "Instance1=" << *instance1 << std::endl;
 	InitHandle(*instance1);
@@ -24,31 +24,185 @@ int main()
 	std::cout << "Instance2=" << *instance2 << std::endl;
 
 
-	PersientLive(*instance1, "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov", "d:\\Work\\Temp\\output1.mp4", H264Codec, 80);
+	PersientLive(*instance1, "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov", "d:\\Work\\Temp\\rtspToMp4.mp4", H264Codec, 80);
 
-	/*std::chrono::milliseconds dura(6000);
+	std::chrono::milliseconds dura(6000);
 	std::this_thread::sleep_for(dura);
 
-	PersientLive(*instance2, "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov", "d:\\Work\\Temp\\output2.flv", H264Codec, 30);*/
+	PersientLive(*instance2, "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov", "d:\\Work\\Temp\\rtspToFlv.flv", FLVCodec, 80);
 
-
-	/// upload github
-	//答复是否撒旦
 	//std::chrono::milliseconds dura(6000);
 	//std::this_thread::sleep_for(dura);
+	int exist = 0;
 	while (true)
 	{
-		if (!IsBusy(*instance1))
+
+		if (instance1 != nullptr && !IsBusy(*instance1))
 		{
 			CloseHandle(*instance1);
 			delete instance1;
+			instance1 = nullptr;
+			exist = exist + 1;
+			//break;
+		}
+
+		if (instance2 != nullptr && !IsBusy(*instance2))
+		{
+			CloseHandle(*instance2);
+			delete instance2;
+			instance2 = nullptr;
+			exist = exist + 1;
+			//break;
+		}
+
+		if (exist >= 2)
+		{
 			break;
 		}
 
 		std::chrono::milliseconds dura(1000);
 		std::this_thread::sleep_for(dura);
-		
+
 	}
+}
+
+
+void RtspToRtmp()
+{
+	std::cout << "Hello World!\n";
+
+	int* instance1 = new int(0);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+	InitHandle(*instance1);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+
+
+	ReMuxerLive(*instance1, "rtsp://184.72.239.149/vod/mp4://BigBuckBunny_175k.mov", "rtmp://192.168.252.129/live/35", 180);
+
+	int exist = 0;
+	while (true)
+	{
+
+		if (instance1 != nullptr && !IsBusy(*instance1))
+		{
+			CloseHandle(*instance1);
+			delete instance1;
+			instance1 = nullptr;
+			exist = exist + 1;
+		}
+
+		if (exist >= 1)
+		{
+			break;
+		}
+
+		std::chrono::milliseconds dura(1000);
+		std::this_thread::sleep_for(dura);
+
+	}
+}
+
+
+void RtmpToRtmp()
+{
+	std::cout << "Hello World!\n";
+
+	int* instance1 = new int(0);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+	InitHandle(*instance1);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+
+
+	ReMuxerLive(*instance1, "rtmp://192.168.252.129/vod/35.mp4", "rtmp://192.168.252.129/live/35", 180);
+
+	int exist = 0;
+	while (true)
+	{
+
+		if (instance1 != nullptr && !IsBusy(*instance1))
+		{
+			CloseHandle(*instance1);
+			delete instance1;
+			instance1 = nullptr;
+			exist = exist + 1;
+		}
+
+		if (exist >= 1)
+		{
+			break;
+		}
+
+		std::chrono::milliseconds dura(1000);
+		std::this_thread::sleep_for(dura);
+
+	}
+}
+
+void rtmpToFile()
+{
+	std::cout << "Hello World!\n";
+
+	int* instance1 = new int(0);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+	InitHandle(*instance1);
+	std::cout << "Instance1=" << *instance1 << std::endl;
+
+	int* instance2 = new int(0);
+	std::cout << "Instance2=" << *instance2 << std::endl;
+	InitHandle(*instance2);
+	std::cout << "Instance2=" << *instance2 << std::endl;
+
+
+	PersientLive(*instance1, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToMp4.mp4", H264Codec, 80);
+
+	std::chrono::milliseconds dura(6000);
+	std::this_thread::sleep_for(dura);
+
+	PersientLive(*instance2, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToFlv.flv", FLVCodec, 80);
+
+	//std::chrono::milliseconds dura(6000);
+	//std::this_thread::sleep_for(dura);
+	int exist = 0;
+	while (true)
+	{
+
+		if (instance1 != nullptr && !IsBusy(*instance1))
+		{
+			CloseHandle(*instance1);
+			delete instance1;
+			instance1 = nullptr;
+			exist = exist + 1;
+			//break;
+		}
+
+		if (instance2 != nullptr && !IsBusy(*instance2))
+		{
+			CloseHandle(*instance2);
+			delete instance2;
+			instance2 = nullptr;
+			exist = exist + 1;
+			//break;
+		}
+
+		if (exist >= 2)
+		{
+			break;
+		}
+
+		std::chrono::milliseconds dura(1000);
+		std::this_thread::sleep_for(dura);
+
+	}
+}
+
+int main()
+{
+    
+	//rtspToFile();
+
+	//rtmpToFile();
+
+	RtspToRtmp();
 
 	/*CloseHandle(*instance1);
 

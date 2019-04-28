@@ -63,6 +63,71 @@ int MediaHelper::MD_OpenSource(const char * source, const int * wndPtr, SourceTy
 
 int MediaHelper::MD_ReMuxerLive(const char * source, const char * dest, int seconds)
 {
+	isFinishTask = false;
+	__mediaThread = std::thread([=]
+		{
+			isFinishTask = false;
+			Init();
+
+			int ret = openSource(source);
+
+			if (ret >= 0)
+			{
+				ret = OpenOutputLive(dest);
+			}
+
+			int64_t startWritePack = av_gettime();
+			clock_t start = clock();
+			if (ret < 0)
+			{
+				char buf[1024] = { 0 };
+				av_strerror(ret, buf, sizeof(buf) - 1);
+				goto Error;
+			}
+
+			cout << "start:" << startWritePack << endl;
+
+
+			// 读包
+			while (true && !abortFlag)
+			{
+				auto packet = this->ReadPacketFromSource();
+
+				if (packet)
+				{
+					ret = WritePacketToContext(packet);
+					if (ret >= 0)
+					{
+						std::cout << "WritePacket Success" << endl;
+					}
+					else {
+						cout << "WritePacket Error" << endl;
+					}
+
+				}
+
+				int64_t endWritePack = av_gettime();
+
+				clock_t end = (clock() - start) / CLOCKS_PER_SEC;
+
+				if (this->abortFlag || (seconds > 0 && end > seconds))
+				{
+					isFinishTask = true;
+					break;
+				}
+
+
+			}
+			// 写入文件尾数句
+			av_write_trailer(outputContext);
+			cout << "Finish~" << endl;
+
+		Error:
+			//Release();
+			int a = 0;
+
+		});
+
 	return 0;
 }
 
@@ -262,6 +327,79 @@ int MediaHelper::OpenOutput(string outUrl, CodecType type= FLVCodec)
 	}
 
 	
+	ret = avformat_write_header(outputContext, NULL);
+
+	if (ret < 0)
+	{
+		av_log(NULL, AV_LOG_ERROR, "format write header failed");
+		goto Error;
+	}
+
+	av_log(NULL, AV_LOG_FATAL, "Open output file success\n");
+
+	return ret;
+
+Error:
+
+	if (outputContext)
+	{
+		for (unsigned int index = 0; index < outputContext->nb_streams; index++)
+		{
+			avcodec_close(outputContext->streams[index]->codec);
+		}
+
+		avformat_close_input(&outputContext);
+	}
+	return ret;
+}
+
+int MediaHelper::OpenOutputLive(string outUrl)
+{
+	string typeExtern = "flv";
+
+	int ret = avformat_alloc_output_context2(&outputContext, NULL, typeExtern.c_str(), outUrl.c_str());
+
+	if (ret < 0)
+	{
+		av_log(NULL, AV_LOG_ERROR, "open output context failed \n");
+		goto Error;
+	}
+
+	av_dump_format(outputContext, 0, outUrl.c_str(), 1);
+
+	//AVCodec* codec =  avcodec_find_encoder(AV_CODEC_ID_H264);
+	//avformat_new_stream(outputContext, codec);
+
+	//防止编码延迟修改参数
+	av_opt_set(outputContext->priv_data, "preset", "superfast", 0);
+	av_opt_set(outputContext->priv_data, "tune", "zerolatency", 0);
+
+	ret = avio_open2(&outputContext->pb, outUrl.c_str(), AVIO_FLAG_READ_WRITE, NULL, NULL);
+	if (ret < 0)
+	{
+		av_log(NULL, AV_LOG_ERROR, "open avio failed");
+		goto Error;
+	}
+
+
+	for (unsigned int i = 0; i < inputContext->nb_streams; i++)
+	{
+		AVStream* stream = avformat_new_stream(outputContext, inputContext->streams[i]->codec->codec);
+		ret = avcodec_copy_context(stream->codec, inputContext->streams[i]->codec);
+
+
+		/*AVCodecContext* codec_ctx = avcodec_alloc_context3(stream->codec);
+		ret = avcodec_parameters_to_context(codec_ctx, in_stream->codecpar);*/
+
+
+		if (ret < 0)
+		{
+			av_log(NULL, AV_LOG_ERROR, "copy coddec context failed\n");
+			goto Error;
+		}
+	}
+
+
 	ret = avformat_write_header(outputContext, NULL);
 
 	if (ret < 0)

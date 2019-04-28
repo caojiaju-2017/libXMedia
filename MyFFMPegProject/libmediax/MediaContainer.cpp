@@ -88,6 +88,17 @@ int MediaContainer::MC_OpenSource(const int & insHandle, const char * source, co
 
 int MediaContainer::MC_ReMuxerLive(const int & insHandle, const char * source, const char * dest, int seconds)
 {
+	MediaHelper* mediaHelper = FinderHelper(insHandle);
+
+	if (mediaHelper == NULL)
+	{
+		return -INVALID_HANDLE;
+	}
+
+	mediaHelper->MD_ReMuxerLive(source, dest, seconds);
+
+
+
 	return 0;
 }
 

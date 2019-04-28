@@ -56,6 +56,15 @@ public:
 	int OpenOutput(string outUrl, CodecType type);
 
 	/**************************************************
+	@brief   : 打开输出上下文  FormatContext
+	@author  : caojiaju
+	@time    : 2019/4
+	@input   : 输入目标：文件/推流地址
+	@return  :
+	**************************************************/
+	int OpenOutputLive(string outUrl);
+
+	/**************************************************
 	@brief   : 从输入源读取一个包
 	@author  : caojiaju
 	@time    : 2019/4
