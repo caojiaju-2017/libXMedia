@@ -17,6 +17,8 @@ public:
 	~MediaHelper();
 
 
+public:
+	callback pCallBackFunction = NULL;
 
 public:
 	AVFormatContext* inputContext = NULL;
@@ -131,6 +133,14 @@ public:
 	**************************************************/
 	int MD_ReMuxerLive(const char* source, const char* dest, int seconds);
 
+	/**************************************************
+	@brief   : 设置回调函数
+	@author  : caojiaju/609853524@qq.com
+	@time    : 2019/4/12
+	@input1   : 回调函数，NULL表示清空回调函数
+	@return   : void
+	**************************************************/
+	void MD_SetCallbackFunction(callback callBackFunc);
 
 	/**************************************************
 	@brief   : 将流持久化 --- 将一路live，转存成文件

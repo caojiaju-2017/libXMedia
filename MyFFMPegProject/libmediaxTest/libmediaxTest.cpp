@@ -7,7 +7,11 @@
 
 #include "libmediax.h"
 #include <thread>
-#include "../libmediax/libmediax.h"
+
+static int callBack(int a, int b) {
+	std::cout << "Time go " << b << std::endl;
+	return 0;
+}
 
 void rtspToFile()
 {
@@ -152,6 +156,7 @@ void rtmpToFile()
 	InitHandle(*instance2);
 	std::cout << "Instance2=" << *instance2 << std::endl;
 
+	SetCallbackFunction(*instance1, callBack);
 
 	PersientLive(*instance1, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToMp4.mp4", H264Codec, 80);
 
@@ -257,17 +262,29 @@ int main()
     
 	//rtspToFile();
 
-	//rtmpToFile();
+	rtmpToFile();
 
 	// RtspToRtmp();
 
-	rtmpAndRtspToTS();
+	//rtmpAndRtspToTS();
 
 	/*CloseHandle(*instance1);
 
 	CloseHandle(*instance2);*/
 
 }
+
+//我需要一个rtsp到其他流的包，sdk。我提供rtp流，你转换出来，我提供回调函数。
+//你可以设计API，先rtsp到ts。要求音频必须是acc。我节后开始实现rtsp服务，
+//这段时间在适应编程。还有我是用go调用。需要mac、win、Linux版。我的开发环境是mac
+//
+//
+//
+//基本可以理解为ffmpeg例子不用建立连接rtsp服务的网络，你需要的数据我都提供，
+//所以你先要了解转换所需要的参数，后面就是rtp数据，你要看了ffmpeg代码就非常清楚了。
+//ts的格式我还不了解，最好就是能直接保存的数据，并告诉该包是否是i侦，还有自启动以来该侦在第几秒等
+
+
 
 // 运行程序: Ctrl + F5 或调试 >“开始执行(不调试)”菜单
 // 调试程序: F5 或调试 >“开始调试”菜单

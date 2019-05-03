@@ -40,7 +40,15 @@ public:
 	**************************************************/
 	int MC_CloseHandle(int& operatorHandle);
 
-
+	/**************************************************
+	@brief   : 设置回调函数
+	@author  : caojiaju/609853524@qq.com
+	@time    : 2019/4/12
+	@input1   : 之前初始化得到的句柄
+	@input2   : 回调函数，NULL表示清空回调函数
+	@return   : void
+	**************************************************/
+	void MC_SetCallbackFunction(const int& insHandle, callback callback);
 
 	/**************************************************
 	@brief   : 打开资源，并播放

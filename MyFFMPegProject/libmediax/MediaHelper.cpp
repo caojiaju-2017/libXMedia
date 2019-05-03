@@ -131,6 +131,11 @@ int MediaHelper::MD_ReMuxerLive(const char * source, const char * dest, int seco
 	return 0;
 }
 
+void MediaHelper::MD_SetCallbackFunction(callback callback)
+{
+	pCallBackFunction = callback;
+}
+
 int MediaHelper::MD_PersientLive(const char * source, const char * filename, CodecType codecType, int seconds)
 {
 	isFinishTask = false;
@@ -186,6 +191,11 @@ int MediaHelper::MD_PersientLive(const char * source, const char * filename, Cod
 				//}
 
 				clock_t end = (clock() - start) / CLOCKS_PER_SEC;
+
+				if (pCallBackFunction != nullptr)
+				{
+					(*pCallBackFunction)(1, end);
+				}
 
 				// 
 				if (this->abortFlag || (seconds > 0 && end > seconds))

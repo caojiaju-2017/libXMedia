@@ -1,4 +1,5 @@
-﻿  libmediaxTest.cpp
+﻿  pch.cpp
+  libmediaxTest.cpp
 D:\Work\libXMedia\MyFFMPegProject\include\stdint.h(162): warning C4005: “SIZE_MAX”: 宏重定义
   C:\Program Files (x86)\Microsoft Visual Studio\2019\Enterprise\VC\Tools\MSVC\14.20.27508\include\limits.h(76): note: 参见“SIZE_MAX”的前一个定义
   libmediaxTest.vcxproj -> D:\Work\libXMedia\MyFFMPegProject\Debug\libmediaxTest.exe

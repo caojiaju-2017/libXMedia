@@ -81,6 +81,19 @@ int MediaContainer::MC_CloseHandle(int & operatorHandle)
 	return 0;
 }
 
+void MediaContainer::MC_SetCallbackFunction(const int& insHandle, callback callback)
+{
+	MediaHelper* mediaHelper = FinderHelper(insHandle);
+
+	if (mediaHelper == NULL)
+	{
+		return ;
+	}
+
+	mediaHelper->MD_SetCallbackFunction(callback);
+	return ;
+}
+
 int MediaContainer::MC_OpenSource(const int & insHandle, const char * source, const int * wndPtr, SourceType sourcetype)
 {
 	return 0;

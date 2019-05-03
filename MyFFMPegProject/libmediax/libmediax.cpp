@@ -53,6 +53,18 @@ int ReMuxerLive(const int & insHandle, const char * source, const char * dest, i
 	return mContainer->MC_ReMuxerLive(insHandle, source, dest, seconds);
 }
 
+void SetCallbackFunction(const int& insHandle, callback callBackFunc)
+{
+	MediaContainer* mContainer = MediaContainer::getInstance();
+
+	if (mContainer == nullptr)
+	{
+		return ;
+	}
+
+	return mContainer->MC_SetCallbackFunction(insHandle, callBackFunc);
+}
+
 int PersientLive(const int& insHandle, const char * source, const char * filename, CodecType codecType, int seconds)
 {
 	MediaContainer* mContainer = MediaContainer::getInstance();
