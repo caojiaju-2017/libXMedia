@@ -24,6 +24,8 @@ public:
 	AVFormatContext* inputContext = NULL;
 	AVFormatContext* outputContext = NULL;
 	
+	AVCodecContext* videoDecCtx = NULL;
+	AVCodecContext* audioDecCtx = NULL;
 
 	bool abortFlag = false;
 	bool isFinishTask = true;
@@ -39,6 +41,15 @@ private:
 	void Init();
 	
 public:
+	/**************************************************
+	@brief   : 打开解码器
+	@author  : caojiaju
+	@time    : 2019/4
+	@input   : 输入地址：文件/live/usb video/desktop
+	@return  :
+	**************************************************/
+	int open_codec_context(enum  AVMediaType type);
+
 	/**************************************************
 	@brief   : 打开输入上下文
 	@author  : caojiaju
@@ -73,7 +84,8 @@ public:
 	@input   : 
 	@return  : 读出一个解封装后的包
 	**************************************************/
-	shared_ptr<AVPacket> ReadPacketFromSource();
+	shared_ptr<AVPacket> ReadPacketFromSource(float& currentSecs);
+	int ReadPacketFromSource2(AVPacket* packet,float& currentSecs);
 
 	/**************************************************
 	@brief   : 包时间同步
@@ -94,6 +106,7 @@ public:
 	@return  : 
 	**************************************************/
 	int WritePacketToContext(shared_ptr<AVPacket> packet);
+	int WritePacketToContext2(AVPacket packet);
 	//int interrupt_cb(void* ctx);
 
 public:

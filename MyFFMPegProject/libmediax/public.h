@@ -3,7 +3,7 @@
 #define  __PUBLIC_HEAD__
 
 // 使用回调函数---测试版
-typedef int(*callback)(int, int);
+typedef int(*callback)(bool,float);
 
 //资源类别
 enum SourceType

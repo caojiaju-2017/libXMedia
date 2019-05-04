@@ -8,8 +8,16 @@
 #include "libmediax.h"
 #include <thread>
 
-static int callBack(int a, int b) {
-	std::cout << "Time go " << b << std::endl;
+static int callBack(bool isIFrame, float b) {
+	if (isIFrame)
+	{
+		std::cout << "Find I Frame on " << b << std::endl;
+	}
+	else
+	{
+		std::cout << "Not I Frame on " << b << std::endl;
+	}
+	
 	return 0;
 }
 
@@ -158,12 +166,12 @@ void rtmpToFile()
 
 	SetCallbackFunction(*instance1, callBack);
 
-	PersientLive(*instance1, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToMp4.mp4", H264Codec, 80);
+	PersientLive(*instance1, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToMp4.mp4", H264Codec, 10);
 
 	std::chrono::milliseconds dura(6000);
 	std::this_thread::sleep_for(dura);
 
-	PersientLive(*instance2, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToFlv.flv", FLVCodec, 80);
+	PersientLive(*instance2, "rtmp://192.168.252.129/vod/35.mp4", "d:\\Work\\Temp\\rtmpToFlv.flv", FLVCodec, 10);
 
 	//std::chrono::milliseconds dura(6000);
 	//std::this_thread::sleep_for(dura);
@@ -257,6 +265,10 @@ void rtmpAndRtspToTS()
 	}
 }
 
+void Testss()
+{
+}
+
 int main()
 {
     
@@ -271,6 +283,8 @@ int main()
 	/*CloseHandle(*instance1);
 
 	CloseHandle(*instance2);*/
+
+	system("Pause");
 
 }
 

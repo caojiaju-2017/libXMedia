@@ -91,7 +91,8 @@ int MediaHelper::MD_ReMuxerLive(const char * source, const char * dest, int seco
 			// 读包
 			while (true && !abortFlag)
 			{
-				auto packet = this->ReadPacketFromSource();
+				float currentTime = 0;
+				auto packet = this->ReadPacketFromSource(currentTime);
 
 				if (packet)
 				{
@@ -136,6 +137,43 @@ void MediaHelper::MD_SetCallbackFunction(callback callback)
 	pCallBackFunction = callback;
 }
 
+
+int MediaHelper::open_codec_context(enum  AVMediaType type)
+{
+	// 音视频流
+	int ret = 0;
+	ret = av_find_best_stream(inputContext, type, -1, -1, NULL, 0);
+
+	// 判断流的序号ret
+	if (ret < 0)
+	{
+		std::cout << "Error:find stream failed" << std::endl;
+		return  -1;
+	}
+	std::cout << "Error:find stream success" << std::endl;
+
+	AVStream* st = inputContext->streams[ret];
+
+	videoDecCtx = st->codec;
+
+	AVCodec* dec = avcodec_find_decoder(videoDecCtx->codec_id);
+
+	if (!dec)
+	{
+		std::cout << "Error:not find decoder" << std::endl;
+		return  -1;
+	}
+
+	// 打开解码器
+	ret = avcodec_open2(videoDecCtx, dec, NULL);
+	if (ret < 0)
+	{
+		std::cout << "Error:can not open decoder" << std::endl;
+		return  -1;
+	}
+
+};
+
 int MediaHelper::MD_PersientLive(const char * source, const char * filename, CodecType codecType, int seconds)
 {
 	isFinishTask = false;
@@ -162,18 +200,24 @@ int MediaHelper::MD_PersientLive(const char * source, const char * filename, Cod
 
 			cout << "start:" << startWritePack << endl;
 
+			if (open_codec_context(AVMEDIA_TYPE_VIDEO) >= 0)
+			{
+				std::cout << "Open codec success" << endl;
+			}
 			
 			// 读包
 			while (true && !abortFlag)
 			{
-				auto packet = this->ReadPacketFromSource();
+				float currentSecond = 0;
+				AVPacket packet ;
+			    int retReadPacket = this->ReadPacketFromSource2(&packet,currentSecond);
 
-				if (packet)
+				if (retReadPacket >= 0)
 				{
-					ret = WritePacketToContext(packet);
+					ret = WritePacketToContext2(packet);
 					if (ret >= 0)
 					{
-						std::cout << "WritePacket Success" << endl;
+						//std::cout << "WritePacket Success" << endl;
 					}
 					else {
 						cout << "WritePacket Error" << endl;
@@ -181,24 +225,22 @@ int MediaHelper::MD_PersientLive(const char * source, const char * filename, Cod
 
 				}
 
-				int64_t endWritePack = av_gettime();
+				//int64_t endWritePack = av_gettime();
 
-				/*cout << "end:" << endWritePack << endl;
-				cout << "sep:" << endWritePack - startWritePack << endl;*/
-				//if (seconds > 0 && (endWritePack - startWritePack) >= (int64_t)seconds * 1000)
-				//{
-				//	break;
-				//}
+				//clock_t end = (clock() - start) / CLOCKS_PER_SEC;
 
-				clock_t end = (clock() - start) / CLOCKS_PER_SEC;
 
-				if (pCallBackFunction != nullptr)
+				// 判断关键帧
+				if (packet.flags & AV_PKT_FLAG_KEY && pCallBackFunction != nullptr)
 				{
-					(*pCallBackFunction)(1, end);
+					(*pCallBackFunction)(true, currentSecond);
 				}
-
+				else if (pCallBackFunction != nullptr)
+				{
+					(*pCallBackFunction)(false, currentSecond);
+				}
 				// 
-				if (this->abortFlag || (seconds > 0 && end > seconds))
+				if (this->abortFlag || (seconds > 0 && currentSecond > seconds))
 				{
 					isFinishTask = true;
 					break;
@@ -442,10 +484,10 @@ Error:
 }
 
 
-shared_ptr<AVPacket> MediaHelper::ReadPacketFromSource()
+shared_ptr<AVPacket> MediaHelper::ReadPacketFromSource(float& currentSecs)
 {
 	//shared_ptr<AVPacket> packet = nullptr;
-	shared_ptr<AVPacket> packet((AVPacket*)av_malloc(sizeof(AVPacket)), [&](AVPacket *p) {av_packet_unref(p); av_freep(&p); });
+	shared_ptr<AVPacket> packet((AVPacket*)av_malloc(sizeof(AVPacket)), [&](AVPacket * p) {av_packet_unref(p); av_freep(&p); });
 
 	av_init_packet(packet.get());
 
@@ -453,6 +495,29 @@ shared_ptr<AVPacket> MediaHelper::ReadPacketFromSource()
 	lastReadPackTime = av_gettime();
 
 	int ret = av_read_frame(inputContext, packet.get());
+
+	// 获取当前帧时间
+	videoDecCtx = inputContext->streams[packet->stream_index]->codec;
+	if (videoDecCtx->codec_type == AVMEDIA_TYPE_VIDEO)
+	{
+		int got_frame = 0;
+		AVFrame* pFrame = NULL;
+		// 解码packet
+		pFrame = av_frame_alloc();
+		if (pFrame != NULL)
+		{
+			avcodec_decode_video2(videoDecCtx, pFrame, &got_frame, packet.get());
+
+			currentSecs = pFrame->pts * av_q2d(inputContext->streams[packet->stream_index]->time_base);
+
+			//cout << "Current Time elspe2 :" << second << endl;
+		}
+	}
+	else
+	{
+		currentSecs = 0;
+	}
+
 
 	if (ret >= 0)
 	{
@@ -462,6 +527,49 @@ shared_ptr<AVPacket> MediaHelper::ReadPacketFromSource()
 	else
 	{
 		return NULL;
+	}
+}int MediaHelper::ReadPacketFromSource2(AVPacket* packet, float& currentSecs)
+{
+	//shared_ptr<AVPacket> packet = nullptr;
+	//AVPacket packet;
+
+	av_init_packet(packet);
+
+	// 更新包的时间
+	lastReadPackTime = av_gettime();
+
+	int ret = av_read_frame(inputContext, packet);
+
+
+	// 获取当前帧时间
+	videoDecCtx = inputContext->streams[packet->stream_index]->codec;
+	if (videoDecCtx->codec_type == AVMEDIA_TYPE_VIDEO)
+	{
+		int got_frame = 0;
+		AVFrame* pFrame = NULL;
+		// 解码packet
+		pFrame = av_frame_alloc();
+		if (pFrame != NULL)
+		{
+			avcodec_decode_video2(videoDecCtx, pFrame, &got_frame, packet);
+
+			currentSecs = pFrame->pts * av_q2d(inputContext->streams[packet->stream_index]->time_base);
+
+			//cout << "Current Time elspe :" << second << endl;
+		}
+	}
+
+
+
+
+	if (ret >= 0)
+	{
+		// packet 裸流 
+		return 0;
+	}
+	else
+	{
+		return -1;
 	}
 }
 
@@ -485,8 +593,18 @@ int MediaHelper::WritePacketToContext(shared_ptr<AVPacket> packet)
 {
 	auto inputStream = inputContext->streams[packet->stream_index];
 	auto outputStream = outputContext->streams[packet->stream_index];
-
+	
 	// 时间戳转换---输入和输出可能存在时间基准不一致
 	av_packet_rescale_ts(packet.get(), inputStream->time_base, outputStream->time_base);
 	return  av_interleaved_write_frame(outputContext, packet.get());
+}
+
+int MediaHelper::WritePacketToContext2(AVPacket packet)
+{
+	auto inputStream = inputContext->streams[packet.stream_index];
+	auto outputStream = outputContext->streams[packet.stream_index];
+
+	// 时间戳转换---输入和输出可能存在时间基准不一致
+	av_packet_rescale_ts(&packet, inputStream->time_base, outputStream->time_base);
+	return  av_interleaved_write_frame(outputContext, &packet);
 }
